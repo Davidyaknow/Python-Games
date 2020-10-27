@@ -1,7 +1,7 @@
 # Tic-Tac-Toe Game!
 # User friendly game of Tic-Tac Toe that accepts inputs.
-# Updated and improved upon from the online Udemy course solution guidelines to accept no errors regardless of int, string and etc at every step!
-
+# Added while loops value error catchers such as designated int, str and NOT NULL data verification factors to prevent game from crashing.
+# Implemented addition instructional guidelines in order to make the game more user friendly.
 
 #Displaying The Board
 
