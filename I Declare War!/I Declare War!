@@ -1,0 +1,157 @@
+# I Declare War! 
+# Card game simulator run with 2 automated players. No input from user necessary.
+# Updated and improved upon from the online Udemy course solution guidelines to fully explain each turn's scenario instead of 
+# simply only stating rounds, war occurrences and game winner.
+
+
+# Card Class
+# We are importing this module to incorporate random shuffling of the deck.
+import random
+# Attribute library
+suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
+ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
+values = {'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':8, 'Nine':9, 'Ten':10, 'Jack':11,
+         'Queen':12, 'King':13, 'Ace':14}
+
+# Card Class
+class Card:
+    # Defining the card rank, suit, and values.
+    def __init__(self,suit,rank):
+        self.suit = suit
+        self.rank = rank
+        self.value = values[rank]
+    # A method that defines how we want our card objects displayed.
+    def __str__(self):
+        return self.rank + " of " + self.suit
+
+# Deck Class   
+class Deck:
+    
+    def __init__(self):
+        # Starting with an empty list.
+        self.all_cards = [] 
+        # Looping suits over ranks, creating 52 instances which we will use later to make the 52 cards in a deck.
+        for suit in suits:
+            for rank in ranks:
+                # Creating the card object. 
+                created_card = Card(suit,rank)
+                
+                self.all_cards.append(created_card)
+
+    # This is where we imported random to untilize to shuffle method.
+    def shuffle(self):
+        random.shuffle(self.all_cards)
+    # This is to remove a card from the main deck, in essence dealing cards out.    
+    def deal_one(self):
+        return self.all_cards.pop()
+
+# Player Class
+class Player:
+    
+    def __init__(self, name):
+        # Creating a name for the player
+        self.name = name
+        # Creating a collection of cards from the main deck creating personal decks. 
+        self.personal_deck_cards = []
+        
+    # These cards are removed from the personal deck in the event of a loss.    
+    def remove_one(self):
+        return self.personal_deck_cards.pop(0)
+     
+    def add_cards(self, new_cards):
+        if type(new_cards) == type([]):
+            self.personal_deck_cards.extend(new_cards)
+        else:
+            self.personal_deck_cards.append(new_cards)
+    
+    def __str__(self):
+        return f"Player {self.name} has {len(self.personal_deck_cards)} cards."
+
+
+# Game Setup
+# Defining Players
+player_one = Player("One")
+player_two = Player("Two")
+
+# Calling the new deck
+new_deck = Deck()
+# Shuffling the new deck
+new_deck.shuffle()
+
+# Add 26 cards to each player, because we only have 2 players. 52/2 = 26.
+for x in range(26):
+    player_one.add_cards(new_deck.deal_one())
+    player_two.add_cards(new_deck.deal_one())
+
+
+# Game in progress validation
+game_on = True
+round_num = 0
+
+# Game in progress while loop
+while game_on: 
+    # Round counter
+    round_num += 1
+    print(f"Round {round_num}.")
+    
+    # Requirements to lose the game when your count of your personal deck reaches 0.
+    if len(player_one.personal_deck_cards) == 0:
+        print("Player One is out of cards!\nPlayer two is the winner!\nCongratulations!")
+        game_on = False
+        break
+    if len(player_two.personal_deck_cards) == 0:
+        print("Player Two is out of cards!\nPlayer One is the winner!\nCongratulations!")
+        game_on = False
+        break
+        
+    # Starting a new round, drawing cards from personal deck to hand.
+    player_one_hand_cards = []
+    player_one_hand_cards.append(player_one.remove_one())
+    
+    player_two_hand_cards = []
+    player_two_hand_cards.append(player_two.remove_one())
+    
+
+    # At War validation
+    at_war = True
+    # While we are at war, to prevent repeating use of the same value. We will append a certain number of new cards to the 
+    # end of our list. Then utilize that final value to determine the winner.
+    while at_war:
+        print(f"Player 1: {player_one_hand_cards[-1]} , Player 2: {player_two_hand_cards[-1]}")
+        if player_one_hand_cards[-1].value > player_two_hand_cards[-1].value: 
+            print(f"The winner for Round {round_num} is Player 1 with {player_one_hand_cards[-1]}!")
+            player_one.add_cards(player_one_hand_cards)
+            player_one.add_cards(player_two_hand_cards)
+            
+            at_war = False
+        
+        elif player_two_hand_cards[-1].value > player_one_hand_cards[-1].value:
+            print(f"The winner for Round {round_num} is Player 2 with {player_two_hand_cards[-1]}!")
+            player_two.add_cards(player_two_hand_cards)
+            player_two.add_cards(player_one_hand_cards)
+            
+            at_war = False
+
+        else: 
+            print("WAR!")
+            # If either player does not have atleast 5 cards, then they forfeit. then game_on = False
+            if len(player_one.personal_deck_cards) < 5:
+                print(f"Player One is unable to declare war with {len(player_one.personal_deck_cards)} cards.")
+                print(f"Player Two is the winner!")
+                print(f"Congratulations!")
+                game_on = False
+                break
+            
+            elif len(player_two.personal_deck_cards) < 5:
+                print(f"Player One is unable to declare war with {len(player_two.personal_deck_cards)} cards.")
+                print(f"Player Two is the winner!")
+                print(f"Congratulations!")
+                game_on = False
+                break
+            # If at_war = True then we remove 5 cards from personal deck, add to hand_cards one at a time. 
+            else:
+                for num in range(5):
+                    player_one_hand_cards.append(player_one.remove_one())
+                    player_two_hand_cards.append(player_two.remove_one())
+    
+    print("\n")
