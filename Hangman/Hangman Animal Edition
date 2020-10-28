@@ -37,7 +37,7 @@ def main():
     already_guessed = []
     play_game = ""
     
-# A loop to re-execute the game when the first round ends:    
+# A loop to re-execute the game when the round ends:    
 def replay():
     global play_game
     play_game = input(f"Do You want to play again? Y or N \n")
