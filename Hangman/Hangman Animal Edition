@@ -1,0 +1,144 @@
+# Welcome to Hangman Discovery Channel Edition!
+# Denied user to reuse the same letter.
+# Increased visual capacity of letters being guessed correctly.
+# Displayed mystery word at the end of the game regardless of outcome.
+# Revised words to be guessed.
+# Updated writing with format style.
+# Updated Hangman visual progression.
+# Thank you DataFlair for the guidance.
+
+import random
+import time
+# Introductions to the game
+print(f"\nWelcome to Hangman Discovery Channel Edition!!!\n")
+name = input(f"Please enter your name: ")
+print(f"Hello {name}! Thanks for joining us.")
+time.sleep(1)
+print(f"Let's play Hangman!")
+time.sleep(1)
+
+def main():
+    global count
+    global display
+    global word
+    global original_word
+    global already_guessed
+    global length
+    global play_game
+    words_to_guess = ["rhino","panda","flamingo","shark","blowfish","tadpole","pangolin",
+                      "mouse","leopard","sloth", "monkey", "chipmunk","viper","warthog",
+                      "raven","shrimp","dolphin","mantis","waterbug","cougar","whale",
+                      "cobra","badger","lemur","starfish"]
+    word = random.choice(words_to_guess)
+    original_word = word.split()
+    length = len(word)
+    count = 0
+    display = '_' * length
+    already_guessed = []
+    play_game = ""
+    
+# A loop to re-execute the game when the first round ends:    
+def replay():
+    global play_game
+    play_game = input(f"Do You want to play again? Y or N \n")
+    while play_game not in ["y", "n","Y","N"]:
+        play_game = input(f"Do You want to play again? Y or N \n")
+    if play_game == "y":
+        main()
+        game_on()
+    elif play_game == "n":
+        print(f"Thanks for playing!")
+        exit()
+        
+# Initialization  
+def game_on():
+    global count
+    global display
+    global word
+    global already_guessed
+    global play_game
+    limit = 5
+    guess = input(f"This is the Hangman Word: {list(display)}. Enter your guess: \nThere are {length} letters in this word.\n")
+    guess = guess.strip()
+    if len(guess.strip()) == 0 or len(guess.strip()) >= 2 or guess <= "9":
+        print(f"Invalid Input, Try a letter\n")
+        game_on()
+    elif guess in word:
+        already_guessed.extend([guess])
+        index = word.find(guess)
+        word = word[:index] + "_" + word[index + 1:]
+        display = display[:index] + guess + display[index + 1:]
+        print(display + "\n")
+    elif guess in already_guessed:
+        print(f"Try another letter.\n")
+    else:
+        already_guessed.extend([guess])
+        count += 1
+        if count == 1:
+            time.sleep(1)
+            print("   _____\n"
+                  "  |     |\n"
+                  "  |\n"
+                  "  |\n"
+                  "  |\n"
+                  "  |\n"
+                  "  |\n"
+                  "__|__\n")
+            print(f"Wrong guess. {str(limit - count)} guesses remaining\n")
+            print(f"There are {length} letters in this word.\n")
+        elif count == 2:
+            time.sleep(1)
+            print("   _____\n"
+                  "  |     |\n"
+                  "  |     |\n"
+                  "  |\n"
+                  "  |\n"
+                  "  |\n"
+                  "  |\n"
+                  "__|__\n")
+            print(f"Wrong guess. {str(limit - count)} guesses remaining\n")
+            print(f"There are {length} letters in this word.\n")
+        elif count == 3:
+            time.sleep(1)
+            print("   _____\n"
+                  "  |     |\n"
+                  "  |     |\n"
+                  "  |     |\n"
+                  "  |\n"
+                  "  |\n"
+                  "  |\n"
+                  "__|__\n")
+            print(f"Wrong guess. {str(limit - count)} guesses remaining\n")
+            print(f"There are {length} letters in this word.\n")
+        elif count == 4:
+            time.sleep(1)
+            print("   _____\n"
+                  "  |     |\n"
+                  "  |     |\n"
+                  "  |     |\n"
+                  "  |     O\n"
+                  "  |    /|\ \n"
+                  "  |   _/_\_ \n"
+                  "__|__ /   \ \n")
+            print(f"Wrong guess. {str(limit - count)} guesses remaining\n")
+            print(f"There are {length} letters in this word.\n")
+        elif count == 5:
+            time.sleep(1)
+            print("   _____\n"
+                  "  |     |\n"
+                  "  |     |\n"
+                  "  |   \ O /\n"
+                  "  |     | \n"
+                  "  |    / \ \n"
+                  "  |  - - - \| \n"
+                  "__|__- - - /| \n")
+            print(f"Sorry, you were hanged!\n")
+            print(f"The word was:{original_word}\n")
+            replay()
+    if word == '_' * length:
+        print(f"Congratulations! You've guessed the word!")
+        replay()
+    elif count != limit:
+        game_on()
+main()
+game_on()
